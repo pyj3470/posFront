@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .right-cl {
+        height: 700px;
+        padding-top: 40px;
+    }
+
+    #datetimepicker {
+        width: 206px;
+        height: 30px;
+    }
+
+    #findPayment {
+        height: 30px;
+        width: 60px;
+    }
+
+    .div-class-content {
+        padding: 0 20px;
+    }
+
+    .div-class-content ul li {
+        float: left;
+        align-content: center;
+    }
+
+    .btn-class {
+        height: 30px;
+        width: 70px;
+    }
+
+    .div-class-1 {
+        padding-top: 60px;
+    }
+
+    select {
+        width: 100%;
+        height: 30px;
+        font-size: 14px;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+    }
+</style>
+</head>
+<body>
+<div class="right-cl container">
+    <div class="div-class-content">
+
+        <div class="dev-class-find">
+            <input type="text" id="datetimepicker" placeholder="请选择时间">
+            <button id="findPayment" >查询</button>
+            <div>
+                <div class="div-class-1">
+                    <div class="row" style="width: 1550px;">
+                        <div class="col-md-4 col-lg-4">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">JDE</div>
+                                <div class="panel-body">
+                                    <span>支付方式：</span>
+                                    <select id="JDEPay">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-lg-4" style="text-align: center; width: 200px;">
+                            <button class="btn-class" id="submitPayment" > ></button>
+                        </div>
+                        <div class="col-md-4 col-lg-4">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">POS</div>
+                                <div class="panel-body">
+                                    <span>支付方式：</span>
+                                    <select id="POSPay">
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+            <script>
+                $('#datetimepicker').datetimepicker({
+                    format: 'yyyy-mm-dd hh:ii:ss', /*此属性是显示顺序，还有显示顺序是mm-dd-yyyy*/
+                });
+                var now = new Date();
+                //格式化日，如果小于9，前面补0
+                var day = ("0" + now.getDate()).slice(-2);
+                //格式化月，如果小于9，前面补0
+                var month = ("0" + (now.getMonth() + 1)).slice(-2);
+                var h = ("0" + now.getHours()).slice(-2);
+                var m = ("0" + now.getMinutes()).slice(-2);
+                var s= ("0" + now.getSeconds()).slice(-2);
+                //拼装完整时间格式
+                var today = now.getFullYear()+"-"+(month)+"-"+(day)+" "+h+":"+m+":"+s;
+                $('input[type="text"]').val(today);
+                $('#findPayment').click(function(){
+                    getPaymentJDE();
+                    getPaymentPOS();
+                });
+                function getPaymentJDE(){
+                    $("#JDEPay").empty();
+                    var data = {"dateTime":$('#datetimepicker').val()};
+                    $.ajax({
+                        url: baseUrl+PaymentJDE,
+                        data:data,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(req){
+                            if(req.code == '0'){
+                                $("#JDEPay").prepend("<option value='0'>请选择</option>");//添加第一个option值
+                                var PaymentJDE=req.data;
+                                console.log(PaymentJDE);
+                                for(var i=0;i<PaymentJDE.length;i++){
+                                    $("#JDEPay").append('<option value="saab" an8="'+PaymentJDE[i].an8+'" ' +
+                                        'alph="'+PaymentJDE[i].alph+'"' +
+                                        '><span>编码：</span>'+PaymentJDE[i].an8+
+                                        '&nbsp;<span>名称：</span>'+PaymentJDE[i].alph+
+                                        '</option>');
+                                }
+                            }
+                        },
+                        error: function(req){
+                            alert("JDE支付信息加载失败!")
+                        }
+                    });
+                }
+                function getPaymentPOS(){
+                    $("#POSPay").empty();
+                    var data = {"dateTime":$('#datetimepicker').val()};
+                    $.ajax({
+                        url: baseUrl+PaymentPOS,
+                        data:data,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(req){
+                            if(req.code == '0'){
+                                $("#POSPay").prepend("<option value='0'>请选择</option>");//添加第一个option值
+                                var PaymentPOS=req.data;
+                                console.log(PaymentPOS);
+                                for(var i=0;i<PaymentPOS.length;i++){
+                                    $("#POSPay").append('<option value="saab" fdc_pmno="'+PaymentPOS[i].fdc_pmno+'" ' +
+                                        'fdc_pmname="'+PaymentPOS[i].fdc_pmname+'"' +
+                                        '><span>编码：</span>'+PaymentPOS[i].fdc_pmno+
+                                        '&nbsp;<span>名称：</span>'+PaymentPOS[i].fdc_pmname+
+                                        '</option>');
+                                }
+                            }
+                        },
+                        error: function(req){
+                            alert("JDE支付信息加载失败!")
+                        }
+                    });
+                }
+
+                $("#submitPayment").click(function() {
+                    var an8 = $("#JDEPay").find("option:selected").attr("an8");
+                    var alph = $("#JDEPay").find("option:selected").attr("alph");
+                    var fdc_pmno = $("#POSPay").find("option:selected").attr("fdc_pmno");
+                    var fdc_pmname = $("#POSPay").find("option:selected").attr("fdc_pmname");
+                    var data = {
+                        "an8": an8,
+                        "alph": alph,
+                        "fdc_pmno": fdc_pmno,
+                        "fdc_pmname": fdc_pmname
+                    };
+                    console.log(data);
+                    $.ajax({
+                        url: baseUrl + savePayment,
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        type: "POST",
+                        dataType: "json",
+                        success: function (req) {
+                            if (req.code == 0) {
+                                alert(req.message);
+                                getPaymentJDE();
+                                getPaymentPOS();
+                            }
+                        },
+                        error: function (req) {
+                            alert("处理失败!")
+                        }
+                    });
+                });
+            </script>
+</html>

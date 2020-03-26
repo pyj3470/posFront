@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    .right-cl {
+        height: 700px;
+        padding-top: 40px;
+    }
+
+    #datetimepicker {
+        width: 206px;
+        height: 30px;
+    }
+
+    #find-btn-class {
+        height: 30px;
+        width: 60px;
+    }
+
+    #find-button {
+        height: 30px;
+        width: 60px;
+    }
+    .div-class-content {
+        padding: 0 0px;
+    }
+
+    .div-class-content ul li {
+        float: left;
+        align-content: center;
+    }
+
+    .btn-class {
+        height: 40px;
+        width: 80px;
+        background: url("../image/downArrow.png") no-repeat center center;
+    }
+    .dev-class-find {
+        padding:0 0px;
+    }
+    .div-class-1 {
+        width: 1410px;
+        padding-top: 60px;
+    }
+
+    select {
+        width: 100%;
+        height: 30px;
+        font-size: 14px;
+        border-radius: 2px;
+        -webkit-border-radius: 2px;
+        -moz-border-radius: 2px;
+    }
+</style>
+</head>
+<body>
+<div class="right-cl container">
+    <div class="div-class-content">
+
+        <div class="dev-class-find">
+            <input type="text" id="datetimepicker" placeholder="请选择时间">
+            <button id="find-btn-class">拉取</button>
+            <button id="find-button">查询</button>
+            <div>
+                <div class="div-class-1">
+                    <div class="row">
+                        <!--内容部分-->
+                        <div id="myModal" class="modal fade" data-keyboard="false"
+                             data-backdrop="static" data-role="dialog"
+                             aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div id="loading" class="loading">处理中。。。</div>
+                        </div>
+                        <div class="col-md-11 col-lg-11">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">JDE</div>
+                                <div class="panel-body">
+                                    <span>商品：</span>
+                                    <select id="JDE">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-11 col-lg-11" style="text-align: center;margin: 40px 0">
+                            <button class="btn btn-default btn-class" type="submit" id="submit"></button>
+                        </div>
+
+                        <div class="col-md-11 col-lg-11">
+                            <div class="panel panel-default">
+                                <!-- Default panel contents -->
+                                <div class="panel-heading">POS</div>
+                                <div class="panel-body">
+                                    <span>商品：</span>
+                                    <select id="POS">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+            <script>
+                $('#datetimepicker').datetimepicker({
+                    format: 'yyyy-mm-dd hh:ii:ss', /*此属性是显示顺序，还有显示顺序是mm-dd-yyyy*/
+                });
+                var now = new Date();
+                //格式化日，如果小于9，前面补0
+                var day = ("0" + now.getDate()).slice(-2);
+                //格式化月，如果小于9，前面补0
+                var month = ("0" + (now.getMonth() + 1)).slice(-2);
+                var h = ("0" + now.getHours()).slice(-2);
+                var m = ("0" + now.getMinutes()).slice(-2);
+                var s= ("0" + now.getSeconds()).slice(-2);
+                //拼装完整时间格式
+                var today = now.getFullYear()+"-"+(month)+"-"+(day)+" "+h+":"+m+":"+s;
+                $('input[type="text"]').val(today);
+                $('#find-btn-class').click(function(){
+                    getMaterielJDE();
+                });
+                $('#find-button').click(function(){
+                    getMaterielJDEAfter();
+                });
+                $("#submit").click(function() {
+                    var fdc_ognno = $("#POS").find("option:selected").attr("fdc_ognno");
+                    var fdc_ognname = $("#POS").find("option:selected").attr("fdc_ognname");
+                    var fdc_rcno = $("#POS").find("option:selected").attr("fdc_rcno");
+                    var fdc_rcname = $("#POS").find("option:selected").attr("fdc_rcname");
+                    var fdc_dishesno = $("#POS").find("option:selected").attr("fdc_dishesno");
+                    var fdc_dishesname = $("#POS").find("option:selected").attr("fdc_dishesname");
+                    var fdc_menuno = $("#POS").find("option:selected").attr("fdc_menuno");
+                    var fdi_ognid = $("#POS").find("option:selected").attr("fdi_ognid");
+                    var fdc_dnno = $("#POS").find("option:selected").attr("fdc_dnno");
+                    var fdc_dnname = $("#POS").find("option:selected").attr("fdc_dnname");
+                    var mmcu = $("#JDE").find("option:selected").attr("mmcu");
+                    var dl01 = $("#JDE").find("option:selected").attr("dl01");
+                    var mcu = $("#JDE").find("option:selected").attr("mcu");
+                    var alky = $("#JDE").find("option:selected").attr("alky");
+                    var litm = $("#JDE").find("option:selected").attr("litm");
+                    var dsc1 = $("#JDE").find("option:selected").attr("dsc1");
+                    var uom1 = $("#JDE").find("option:selected").attr("uom1");
+                    var data = {
+                        "fdc_ognno": fdc_ognno,
+                        "fdc_ognname": fdc_ognname,
+                        "fdc_rcno": fdc_rcno,
+                        "fdc_rcname": fdc_rcname,
+                        "fdc_dishesno": fdc_dishesno,
+                        "fdc_dishesname": fdc_dishesname,
+                        "fdc_menuno":fdc_menuno,
+                        "fdi_ognid":fdi_ognid,
+                        "fdc_dnno":fdc_dnno,
+                        "fdc_dnname":fdc_dnname,
+                        "mmcu": mmcu,
+                        "dl01": dl01,
+                        "mcu": mcu,
+                        "alky": alky,
+                        "litm": litm,
+                        "dsc1": dsc1,
+                        "uom1":uom1
+                    };
+                    $.ajax({
+                        url: baseUrl + MaterielBefore,
+                        contentType: "application/json",
+                        data: JSON.stringify(data),
+                        type: "POST",
+                        dataType: "json",
+                        success: function (req) {
+                            if (req.code == 0) {
+                                getMaterielJDEAfter();
+                            }
+                        },
+                        error: function (req) {
+                            alert("处理失败!")
+                        }
+                    });
+                });
+                function getMaterielPOS(){
+                    $("#POS").empty();
+                    var data = {"dateTime":$('#datetimepicker').val()};
+                    $.ajax({
+                        url: baseUrl+MaterielPOS,
+                        data:data,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(req){
+                            if(req.code == '0'){
+                               $("#POS").prepend("<option value='0'>拉取信息完毕</option>");//添加第一个option值
+                                /* var MaterielPOS=req.data;
+                                for(var i=0;i<MaterielPOS.length;i++){
+                                    $("#POS").append('<option value="saab" fdc_ognno="'+MaterielPOS[i].fdc_ognno+'" ' +
+                                        'fdc_ognname="'+MaterielPOS[i].fdc_ognname+'" ' +
+                                        'fdc_rcno="'+MaterielPOS[i].fdc_rcno+'" ' +
+                                        'fdc_rcname="'+MaterielPOS[i].fdc_rcname+'" ' +
+                                        'fdc_dishesno="'+MaterielPOS[i].fdc_dishesno+'"' +
+                                        'fdc_dishesname="'+MaterielPOS[i].fdc_dishesname+'"' +
+                                        'fdc_menuno="'+MaterielPOS[i].fdc_menuno+'"' +
+                                        'fdi_ognid="'+MaterielPOS[i].fdi_ognid+'"' +
+                                        'fdc_dnno="'+MaterielPOS[i].fdc_dnno+'"' +
+                                        'fdc_dnname="'+MaterielPOS[i].fdc_dnname+'"' +
+                                        '><span>门店编码：</span>'+MaterielPOS[i].fdc_ognno+
+                                        '&nbsp;<span>门店名称：</span>'+MaterielPOS[i].fdc_ognname+
+                                        '&nbsp;<span>档口编码：</span>'+MaterielPOS[i].fdc_rcno+
+                                        '&nbsp;<span>档口名称：</span>'+MaterielPOS[i].fdc_rcname+
+                                        '&nbsp;<span>商品编码：</span>'+MaterielPOS[i].fdc_dishesno+
+                                        '&nbsp;<span>商品名称：</span>'+MaterielPOS[i].fdc_dishesname+
+                                        '</option>');
+                                }*/
+                            }
+                        },
+                        complete:function(XMLHttpRequest,textStatus){
+                            // alert('远程调用成功，状态文本值：'+textStatus);
+                            $('#myModal').modal('hide');
+                        },
+                        error: function(req){
+                            alert("POS物料信息加载失败!")
+                        }
+                    });
+                }
+                function getMaterielPOSAfter(){
+                    $("#POS").empty();
+                    $.ajax({
+                        url: baseUrl+MaterielPOSAfter,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(req){
+                            if(req.code == '0'){
+                                $("#POS").prepend("<option value='0'>请选择</option>");//添加第一个option值
+                                var MaterielPOS=req.data;
+                                for(var i=0;i<MaterielPOS.length;i++){
+                                    $("#POS").append('<option value="saab" fdc_ognno="'+MaterielPOS[i].fdc_ognno+'" ' +
+                                        'fdc_ognname="'+MaterielPOS[i].fdc_ognname+'" ' +
+                                        'fdc_rcno="'+MaterielPOS[i].fdc_rcno+'" ' +
+                                        'fdc_rcname="'+MaterielPOS[i].fdc_rcname+'" ' +
+                                        'fdc_dishesno="'+MaterielPOS[i].fdc_dishesno+'"' +
+                                        'fdc_dishesname="'+MaterielPOS[i].fdc_dishesname+'"' +
+                                        'fdc_menuno="'+MaterielPOS[i].fdc_menuno+'"' +
+                                        'fdi_ognid="'+MaterielPOS[i].fdi_ognid+'"' +
+                                        'fdc_dnno="'+MaterielPOS[i].fdc_dnno+'"' +
+                                        'fdc_dnname="'+MaterielPOS[i].fdc_dnname+'"' +
+                                        '><span>门店编码：</span>'+MaterielPOS[i].fdc_ognno+
+                                        '&nbsp;<span>门店名称：</span>'+MaterielPOS[i].fdc_ognname+
+                                        '&nbsp;<span>档口编码：</span>'+MaterielPOS[i].fdc_rcno+
+                                        '&nbsp;<span>档口名称：</span>'+MaterielPOS[i].fdc_rcname+
+                                        '&nbsp;<span>商品编码：</span>'+MaterielPOS[i].fdc_dishesno+
+                                        '&nbsp;<span>商品名称：</span>'+MaterielPOS[i].fdc_dishesname+
+                                        '</option>');
+                                }
+                            }
+                        },
+                        complete:function(XMLHttpRequest,textStatus){
+                            // alert('远程调用成功，状态文本值：'+textStatus);
+                            $('#myModal').modal('hide');
+                        },
+                        error: function(req){
+                            alert("POS物料信息加载失败!")
+                        }
+                    });
+                }
+                function getMaterielJDE(){
+                    $("#JDE").empty();
+                    var data = {"dateTime":$('#datetimepicker').val()};
+                    $.ajax({
+                        url: baseUrl+MaterielJDE,
+                        data:data,
+                        type: "GET",
+                        dataType: "json",
+                        beforeSend: function(XMLHttpRequest){
+                            $('#myModal').modal('show');
+                        },
+                        success: function(req){
+                            if(req.code == '0'){
+                                $("#JDE").prepend("<option value='0'>拉取信息完毕</option>");//添加第一个option值
+                                getMaterielPOS();
+                                /*var MaterielJDE=req.data;
+                                for(var i=0;i<MaterielJDE.length;i++){
+                                    $("#JDE").append('<option value="saab" mmcu="'+MaterielJDE[i].mmcu+'" ' +
+                                        'dl01="'+MaterielJDE[i].dl01+'"' +
+                                        'mcu="'+MaterielJDE[i].mcu+'"' +
+                                        'alky="'+MaterielJDE[i].alky+'"' +
+                                        'litm="'+MaterielJDE[i].litm+'"' +
+                                        'dsc1="'+MaterielJDE[i].dsc1+'"' +
+                                        'uom1="'+MaterielJDE[i].uom1+'"' +
+                                        '><span>门店编码：</span>'+MaterielJDE[i].mcu+
+                                        '&nbsp;<span>门店名称：</span>'+MaterielJDE[i].dl01+
+                                        '&nbsp;<span>档口编码：</span>'+MaterielJDE[i].mmcu+
+                                        '&nbsp;<span>档口名称：</span>'+MaterielJDE[i].alky+
+                                        '&nbsp;<span>商品编码：</span>'+MaterielJDE[i].litm+
+                                        '&nbsp;<span>商品名称：</span>'+MaterielJDE[i].dsc1+
+                                        '</option>');
+                                }*/
+                            }
+                        },
+                        error: function(req){
+                            alert("JDE物料信息加载失败!")
+                            $('#myModal').modal('hide');
+                        }
+                    });
+                }
+
+                function getMaterielJDEAfter(){
+                    $("#JDE").empty();
+                    $.ajax({
+                        url: baseUrl+MaterielJDEAfter,
+                        type: "GET",
+                        dataType: "json",
+                        beforeSend: function(XMLHttpRequest){
+                            $('#myModal').modal('show');
+                        },
+                        success: function(req){
+                            if(req.code == '0'){
+                                $("#JDE").prepend("<option value='0'>请选择</option>");//添加第一个option值
+                                var MaterielJDE=req.data;
+                                for(var i=0;i<MaterielJDE.length;i++){
+                                    $("#JDE").append('<option value="saab" mmcu="'+MaterielJDE[i].mmcu+'" ' +
+                                        'dl01="'+MaterielJDE[i].dl01+'"' +
+                                        'mcu="'+MaterielJDE[i].mcu+'"' +
+                                        'alky="'+MaterielJDE[i].alky+'"' +
+                                        'litm="'+MaterielJDE[i].litm+'"' +
+                                        'dsc1="'+MaterielJDE[i].dsc1+'"' +
+                                        'uom1="'+MaterielJDE[i].uom1+'"' +
+                                        '><span>门店编码：</span>'+MaterielJDE[i].mcu+
+                                        '&nbsp;<span>门店名称：</span>'+MaterielJDE[i].dl01+
+                                        '&nbsp;<span>档口编码：</span>'+MaterielJDE[i].mmcu+
+                                        '&nbsp;<span>档口名称：</span>'+MaterielJDE[i].alky+
+                                        '&nbsp;<span>商品编码：</span>'+MaterielJDE[i].litm+
+                                        '&nbsp;<span>商品名称：</span>'+MaterielJDE[i].dsc1+
+                                        '</option>');
+                                }
+                                getMaterielPOSAfter();
+                            }
+                        },
+
+                        error: function(req){
+                            alert("JDE物料信息加载失败!")
+                            $('#myModal').modal('hide');
+                        }
+                    });
+                }
+            </script>
+</html>

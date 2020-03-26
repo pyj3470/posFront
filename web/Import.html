@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        .right-cl {
+            height: 700px;
+            padding-top: 40px;
+        }
+
+        #datetimepicker {
+            width: 206px;
+            height: 30px;
+        }
+
+        #SubmitJDE {
+            height: 30px;
+            width: 60px;
+        }
+
+        #SubmitPOS {
+            height: 30px;
+            width: 60px;
+        }
+
+        .div-class-content {
+            padding: 0 20px;
+        }
+
+        .div-class-content ul li {
+            float: left;
+            align-content: center;
+        }
+
+        .btn-class {
+            height: 30px;
+            width: 70px;
+        }
+
+        .div-class-1 {
+            padding-top: 60px;
+        }
+
+        select {
+            width: 100%;
+            height: 30px;
+            font-size: 14px;
+            border-radius: 2px;
+            -webkit-border-radius: 2px;
+            -moz-border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+<div class="right-cl container">
+    <div class="div-class-content">
+
+        <div class="dev-class-find">
+            <input type="text" id="datetimepicker" placeholder="请选择时间">
+            <button  id="SubmitJDE" onclick="SubmitJDE()" >导出JDE</button>
+            <button id="SubmitPOS" onclick="SubmitPOS()" >导出POS</button>
+            <div>
+                <div class="div-class-1">
+                    <div class="row" style="width: 1000px;">
+                        <!--内容部分-->
+                        <div id="myModal" class="modal fade" data-keyboard="false"
+                             data-backdrop="static" data-role="dialog"
+                             aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div id="loading" class="loading">处理中。。。</div>
+                        </div>
+                        <div  id="importBox" >
+                                    <form id="importForm" onSubmit= "return test();" action= "http://127.0.0.1:9010/saas/Materiel/import" method="post" enctype="multipart/form-data"
+                                                      class="form-search" style="padding-left:350px;text-align:center;width: 1000px;" ><br/>
+                                        <input id="uploadFile" name="file" type="file" style="width:400px;padding-left: 200px;"/><br/><br/>　　
+                                        <input id="btnImportSubmi" class="btn btn-primary" style="width: 106px;" type="submit" value="   导入   "/>
+                                        <a style="  font-size:20px;" href="http://127.0.0.1:9010/saas/Materiel/exportTemplate">下载模板</a>
+                                    </form>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    $('#datetimepicker').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii:ss', /*此属性是显示顺序，还有显示顺序是mm-dd-yyyy*/
+    });
+    var now = new Date();
+    //格式化日，如果小于9，前面补0
+    var day = ("0" + now.getDate()).slice(-2);
+    //格式化月，如果小于9，前面补0
+    var month = ("0" + (now.getMonth() + 1)).slice(-2);
+    var h = ("0" + now.getHours()).slice(-2);
+    var m = ("0" + now.getMinutes()).slice(-2);
+    var s= ("0" + now.getSeconds()).slice(-2);
+    //拼装完整时间格式
+    var today = now.getFullYear()+"-"+(month)+"-"+(day)+" "+h+":"+m+":"+s;
+    $('input[type="text"]').val(today);
+    function SubmitJDE(){
+        window.location.href = baseUrl +"saas/Materiel/exportJDE?dateTime="+$('#datetimepicker').val();
+    };
+    function SubmitPOS(){
+        window.location.href = baseUrl +"saas/Materiel/exportPOS?dateTime="+$('#datetimepicker').val();
+    };
+    $(document).ready(function() {
+        $("#importForm").ajaxForm(function(data){
+            $('#uploadFile').val("");
+            $('#myModal').modal('hide');
+            //Alert("post success.");
+        });
+    });
+    function test(){
+        if($("#uploadFile").val() == null || $("#uploadFile").val() == ""){
+            return false;
+        }else{
+            $('#myModal').modal('show');
+            return true;
+        }
+    }
+
+</script>
+</html>

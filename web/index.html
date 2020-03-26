@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>基础信息映射</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="../css/bootstrap.css">
+    <!--页面样式-->
+    <link  rel="stylesheet" href="../css/index.css">
+    <link href="../css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <!--logo-->
+        <div class="log">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header logo">
+                        <a class="navbar-brand" href="javaScript:void(0);">
+                            <!--<img alt="Brand" src="...">-->
+                        </a>
+                    </div>
+                    <ul class="nav-link-class">
+                        <li><a href="javaScript:void(0);"><i class="fa fa-print fa-2x"></i></a></li>
+                        <li><a href="javaScript:void(0);"><i class="fa fa-user fa-2x"></i></a></li>
+                        <li><a href="javaScript:void(0);"><i class="fa fa-power-off fa-2x"></i></a></li>
+                        <li style="padding-top: 10px;" id="time"></li>
+                    </ul>
+                </div>
+
+            </nav>
+        </div>
+        <!--内容中心-->
+        <div  id="content" class="container-fluid">
+            <div class="row">
+                <div class="col-sm-2 col-md-2 col-lg-2 " style="width: 180px;">
+                    <div class="left-menu">
+                        <ul>
+                            <!--<li><span onclick="Materiel()">物料信息</span></li>-->
+                            <li><span onclick="Payment()">支付方式</span></li>
+                            <li><span onclick="Amount()">手动推送</span></li>
+                            <li><span onclick="Import()">批量导入物料信息</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-10 col-md-10 col-lg-10">
+                    <div class="right-content"></div>
+                </div>
+       </div>
+        </div>
+    </div>
+</body>
+<!--JQuery-->
+<script src="../js/jquery-3.3.1.js"></script>
+<script src="../js/jquery-form.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件-->
+<script src="../js/bootstrap.js" ></script>
+<!-- （重要，这就是日期控件所需的js） -->
+<script type="text/javascript" src="../js/bootstrap-datetimepicker.js"></script>
+<!--（重要，弹出日历里面 显示的文字 bootstrap里面显示的是英文 ，触发后显示的年月日等的显示文字，即为：Jan，feb等等）-->
+<script type="text/javascript" src="../js/bootstrap-datetimepicker.fr.js"></script>
+<script src="../js/index.js" ></script>
+<script>
+    function Materiel(){
+        $(".right-content").load("Materiel.html");
+    }
+    function Payment(){
+        $(".right-content").load("Payment.html");
+    }
+    function Amount(){
+        $(".right-content").load("Amount.html");
+    }
+    function Import(){
+        $(".right-content").load("Import.html");
+    }
+    function gettime(){
+        var d = new Date().toLocaleString();
+        document.getElementById("time").innerHTML = d;
+        window.setTimeout("gettime()",1000);
+    }
+    window.onload = gettime;
+</script>
+</html>
